@@ -45,6 +45,20 @@ a { text-decoration: none; color: inherit; }
 }
 .animate-pulse { animation: pulse 2s infinite; }
 
+@keyframes officeWalk {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(4px) translateY(-2px); }
+  50% { transform: translateX(8px) translateY(0); }
+  75% { transform: translateX(4px) translateY(2px); }
+}
+.animate-office-walk { animation: officeWalk 3.6s ease-in-out infinite; }
+
+@keyframes officeRest {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.animate-office-rest { animation: officeRest 4.2s ease-in-out infinite; }
+
 .text-gradient {
   background: linear-gradient(to right, #fff, #a1a1aa);
   -webkit-background-clip: text;
