@@ -104,6 +104,7 @@ function AuthCheck({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [agentModels, setAgentModels] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const auth = localStorage.getItem("secondbrain_auth");
@@ -129,6 +130,18 @@ function AuthCheck({ children }: { children: React.ReactNode }) {
 
   return <>{children}</>;
 }
+
+// 动态获取 Agent 模型配置
+useEffect(() => {
+  fetch('/api/agent-models')
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.agents) {
+        setAgentModels(data.agents);
+      }
+    })
+    .catch(err => console.error('Failed to fetch agent models:', err));
+}, []);
 
 // 模拟数据 - 实际应该从API获取
 const mockMemories: Memory[] = [
@@ -519,8 +532,13 @@ export default function SecondBrain() {
       ? "ok"
       : "idle";
 
+    // 动态获取模型配置，优先使用 API 返回的值
+    const modelFromApi = typeof agentModels === 'object' && agentModels !== null ? agentModels[agent.id] : undefined;
+    const dynamicModel = modelFromApi || agent.model;
+
     return {
       ...agent,
+      model: dynamicModel,
       status,
       tasks: agentTasks.length,
       completedTasks: agentTasks.filter((task) => task.status === "ok").length,
