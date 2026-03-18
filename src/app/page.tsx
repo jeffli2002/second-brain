@@ -310,13 +310,13 @@ interface Agent {
   lastRun: string;
 }
 
-// Agent 模拟数据
+// Agent 模拟数据 - 与 openclaw.json 配置一致
 const agentDefinitions = [
   {
     id: "coding",
     name: "Coding Agent",
     description: "负责代码开发、重构、调试、技术架构与Skill进化",
-    model: "MiniMax M2.5",
+    model: "GPT-5.4",
     taskIds: ["task-evolution"],
   },
   {
@@ -330,21 +330,28 @@ const agentDefinitions = [
     id: "growth",
     name: "Growth Agent",
     description: "负责OpenClaw动态监控",
-    model: "Kimi K2.5",
+    model: "MiniMax M2.5",
     taskIds: ["task-seo"],
   },
   {
     id: "product",
     name: "Product Agent",
     description: "负责竞品分析和产品规划",
-    model: "Kimi K2.5",
+    model: "MiniMax M2.5",
     taskIds: ["task-product"],
+  },
+  {
+    id: "finance",
+    name: "Finance Agent",
+    description: "负责财务分析、成本控制与投资回报追踪",
+    model: "MiniMax M2.5",
+    taskIds: ["task-finance"],
   },
   {
     id: "chief",
     name: "Chief Agent",
     description: "负责每晚 Chief Agent 工作总结报告与系统巡检",
-    model: "GPT-5.4",
+    model: "MiniMax M2.5",
     taskIds: ["task-chief", "task-health"],
   },
 ];
