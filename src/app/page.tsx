@@ -426,7 +426,7 @@ const agentColorMap: Record<string, string> = {
   evo: "#f472b6",
 };
 
-type TabType = "home" | "memories" | "documents" | "tasks" | "agents" | "team" | "office";
+type TabType = "home" | "memories" | "documents" | "tasks" | "agents" | "team" | "office" | "rd";
 
 export default function SecondBrain() {
   const [activeTab, setActiveTab] = useState<TabType>("home");
@@ -860,6 +860,22 @@ export default function SecondBrain() {
                 <path d="M9 18v.01" />
               </svg>
               <span>Office</span>
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => setActiveTab("rd")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                activeTab === "rd"
+                  ? "bg-blue-500/20 text-blue-400"
+                  : "text-[#a1a1aa] hover:bg-[#27272a] hover:text-white"
+              }`}
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
+              </svg>
+              <span>R&D 智囊团</span>
             </button>
           </li>
         </ul>
@@ -2265,6 +2281,217 @@ export default function SecondBrain() {
     );
   };
 
+  // R&D 智囊团 Memos 页面
+  const renderRdMemos = () => {
+    const [rdMemos, setRdMemos] = useState<any[]>([]);
+    const [rdLoading, setRdLoading] = useState(true);
+    const [expandedMemo, setExpandedMemo] = useState<string | null>(null);
+
+    useEffect(() => {
+      async function fetchRdMemos() {
+        setRdLoading(true);
+        try {
+          const res = await fetch('/api/rd-memos');
+          const data = await res.json();
+          if (data.memos) setRdMemos(data.memos);
+        } catch (e) {
+          console.error('Failed to fetch R&D memos:', e);
+        } finally {
+          setRdLoading(false);
+        }
+      }
+      fetchRdMemos();
+    }, []);
+
+    const statusColors: Record<string, string> = {
+      '已完成': 'bg-green-500/20 text-green-300 border-green-500/30',
+      '三角辩论中': 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30',
+      '构思中': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+    };
+
+    const projectColors: Record<string, string> = {
+      'Second Brain': 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+      'AI培训课程': 'bg-orange-500/20 text-orange-300 border-orange-500/30',
+      '通用': 'bg-slate-500/20 text-slate-300 border-slate-500/30',
+    };
+
+    return (
+      <div className="p-8 animate-fadeIn">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h2 className="text-2xl font-bold flex items-center gap-3">
+              <span>🧠</span>
+              R&D 智囊团
+            </h2>
+            <p className="text-sm text-[#71717a] mt-2">
+              三个 AI 模型持续研究 Second Brain 与 AI培训课程，每周产出结构化 Memo 推荐
+            </p>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-[#71717a] bg-[#141416] border border-[#27272a] rounded-lg px-3 py-2">
+            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+            三角辩论进行中
+          </div>
+        </div>
+
+        {/* 三角色介绍 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          {[
+            { role: '策略师 Strategist', model: 'MiniMax-M2.7', icon: '📊', color: 'blue', desc: '专注增长与营收机会，从市场和竞品视角提出新想法' },
+            { role: '产品官 Product', model: 'Kimi 2.5', icon: '🎯', color: 'purple', desc: '关注产品体验与功能改进，从用户反馈和交互角度思考' },
+            { role: '批评者 Devil\'s Advocate', model: 'GPT-5.4', icon: '⚔️', color: 'red', desc: '挑战其他两人的观点，找出漏洞与潜在风险' },
+          ].map((agent) => (
+            <div key={agent.role} className="rounded-xl border border-[#27272a] bg-[#141416] p-4">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-2xl">{agent.icon}</span>
+                <div>
+                  <p className="font-semibold text-white text-sm">{agent.role}</p>
+                  <p className="text-xs text-[#71717a]">{agent.model}</p>
+                </div>
+              </div>
+              <p className="text-xs text-[#a1a1aa] leading-relaxed">{agent.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* 工作流程 */}
+        <div className="bg-[#141416] rounded-xl border border-[#27272a] p-5 mb-8">
+          <h3 className="text-sm font-semibold text-white mb-4">三角辩论工作流</h3>
+          <div className="flex items-center gap-4 text-xs text-[#a1a1aa] flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">1</span>
+              <span>输入项目现状</span>
+            </div>
+            <div className="text-[#3f3f46]">→</div>
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs font-bold">2</span>
+              <span>各自独立构思</span>
+            </div>
+            <div className="text-[#3f3f46]">→</div>
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-xs font-bold">3</span>
+              <span>三角辩论</span>
+            </div>
+            <div className="text-[#3f3f46]">→</div>
+            <div className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center text-xs font-bold">4</span>
+              <span>输出最终 Memo</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Memo 列表 */}
+        {rdLoading ? (
+          <div className="text-center py-16 text-[#71717a]">加载中...</div>
+        ) : rdMemos.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="text-4xl mb-4">🔍</div>
+            <p className="text-[#71717a]">暂无 R&D Memo</p>
+            <p className="text-xs text-[#3f3f46] mt-2">三角辩论完成后会自动出现在这里</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {rdMemos.map((memo) => (
+              <div
+                key={memo.id}
+                className="bg-[#141416] rounded-xl border border-[#27272a] overflow-hidden hover:border-blue-500/30 transition-all"
+              >
+                <button
+                  onClick={() => setExpandedMemo(expandedMemo === memo.id ? null : memo.id)}
+                  className="w-full p-5 text-left"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-2 flex-wrap">
+                        <span className="text-sm font-semibold text-white">{memo.title}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded border ${statusColors[memo.status] || 'bg-blue-500/20 text-blue-300 border-blue-500/30'}`}>
+                          {memo.status}
+                        </span>
+                        <span className={`text-xs px-2 py-0.5 rounded border ${projectColors[memo.project] || 'bg-slate-500/20 text-slate-300 border-slate-500/30'}`}>
+                          {memo.project}
+                        </span>
+                        <span className="text-xs text-[#71717a]">第{memo.round}轮</span>
+                      </div>
+                      <p className="text-xs text-[#a1a1aa] line-clamp-2">
+                        {memo.finalMemo || '最终 Memo 整理中...'}
+                      </p>
+                    </div>
+                    <div className="text-[#3f3f46] text-lg shrink-0">
+                      {expandedMemo === memo.id ? '▲' : '▼'}
+                    </div>
+                  </div>
+                </button>
+
+                {expandedMemo === memo.id && (
+                  <div className="px-5 pb-5 border-t border-[#27272a] pt-4 space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                      <div className="bg-[#1f1f22] rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-lg">📊</span>
+                          <span className="text-sm font-semibold text-blue-300">策略师提议</span>
+                        </div>
+                        <p className="text-xs text-[#cbd5e1] leading-relaxed">
+                          {memo.strategistProposal || '暂无提议'}
+                        </p>
+                      </div>
+                      <div className="bg-[#1f1f22] rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-lg">🎯</span>
+                          <span className="text-sm font-semibold text-purple-300">产品官提议</span>
+                        </div>
+                        <p className="text-xs text-[#cbd5e1] leading-relaxed">
+                          {memo.productProposal || '暂无提议'}
+                        </p>
+                      </div>
+                      <div className="bg-[#1f1f22] rounded-lg p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-lg">⚔️</span>
+                          <span className="text-sm font-semibold text-red-300">批评者提议</span>
+                        </div>
+                        <p className="text-xs text-[#cbd5e1] leading-relaxed">
+                          {memo.devilProposal || '暂无提议'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {memo.finalMemo && (
+                      <div className="bg-gradient-to-r from-[#1a1a2e] to-[#141416] rounded-lg p-5 border border-blue-500/20">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-lg">📝</span>
+                          <span className="text-sm font-semibold text-blue-300">最终 Memo</span>
+                        </div>
+                        <pre className="text-xs text-[#e4e4e7] leading-relaxed whitespace-pre-wrap font-sans">
+                          {memo.finalMemo}
+                        </pre>
+                      </div>
+                    )}
+
+                    <div className="text-xs text-[#3f3f46]">
+                      {memo.date} · R&D 智囊团第 {memo.round} 轮
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-8 p-4 bg-[#141416] rounded-xl border border-[#27272a] text-center">
+          <p className="text-xs text-[#71717a]">
+            R&D 辩论过程记录 →
+            <a
+              href="https://my.feishu.cn/base/L0qDbUS5ma16tmsd5NkcX35Jnml"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 ml-1"
+            >
+              飞书 R&D 智囊团 Dashboard
+            </a>
+          </p>
+        </div>
+      </div>
+    );
+  };
+
 
   // 渲染首页
   const renderHome = () => (
@@ -3002,6 +3229,7 @@ export default function SecondBrain() {
             {activeTab === "agents" && renderAgents()}
             {activeTab === "team" && renderTeam()}
             {activeTab === "office" && renderOffice()}
+            {activeTab === "rd" && renderRdMemos()}
           </>
         )}
       </main>
